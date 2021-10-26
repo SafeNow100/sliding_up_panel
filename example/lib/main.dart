@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
             parallaxEnabled: true,
             parallaxOffset: .5,
             body: _body(),
-            panelBuilder: (sc) => _panel(sc),
+            panelBuilder: (context, sc) => _panel(context, sc),
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(18.0),
                 topRight: Radius.circular(18.0)),
@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _panel(ScrollController sc) {
+  Widget _panel(BuildContext context, ScrollController sc) {
     return MediaQuery.removePadding(
         context: context,
         removeTop: true,
