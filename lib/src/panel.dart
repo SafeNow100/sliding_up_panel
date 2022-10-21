@@ -324,16 +324,16 @@ class _SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvid
                             height: widget.maxHeight,
                             child: widget.panel != null ? widget.panel : widget.panelBuilder!(_sc),
                           )),
-
-                      // header
-                      widget.header != null
-                          ? Positioned(
-                              top: widget.slideDirection == SlideDirection.UP ? 0.0 : null,
-                              bottom: widget.slideDirection == SlideDirection.DOWN ? 0.0 : null,
-                              child: widget.header ?? SizedBox(),
-                            )
-                          : Container(),
-
+                      // // header
+                      // widget.header != null
+                      //     ? IgnorePointer(
+                      //     child: Positioned(
+                      //       top: widget.slideDirection == SlideDirection.UP ? 0.0 : null,
+                      //       bottom: widget.slideDirection == SlideDirection.DOWN ? 0.0 : null,
+                      //       child: widget.header ?? SizedBox(),
+                      //     )
+                      // )
+                      //     : IgnorePointer(child: Container()),
                       // footer
                       widget.footer != null
                           ? Positioned(
