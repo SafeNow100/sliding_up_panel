@@ -19,7 +19,7 @@ enum SlideDirection {
 
 enum PanelState { OPEN, CLOSED }
 
-typedef OnTabBackdropCallback = Future<bool> Function();
+typedef OnTapBackdropCallback = Future<bool> Function();
 
 class SlidingUpPanel extends StatefulWidget {
   /// The Widget that slides into view. When the
@@ -162,7 +162,7 @@ class SlidingUpPanel extends StatefulWidget {
   final PanelState defaultPanelState;
 
   /// Optional callback to be called when user taps the backdrop to close a panel
-  final OnTabBackdropCallback? onTapBackdrop;
+  final OnTapBackdropCallback? onTapBackdrop;
 
   SlidingUpPanel(
       {Key? key,
