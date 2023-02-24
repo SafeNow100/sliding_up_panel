@@ -19,6 +19,8 @@ enum SlideDirection {
 
 enum PanelState { OPEN, CLOSED }
 
+typedef OnTabBackdropCallback = Future<bool> Function();
+
 class SlidingUpPanel extends StatefulWidget {
   /// The Widget that slides into view. When the
   /// panel is collapsed and if [collapsed] is null,
@@ -159,6 +161,9 @@ class SlidingUpPanel extends StatefulWidget {
   /// by default the Panel is open and must be swiped closed by the user.
   final PanelState defaultPanelState;
 
+  /// Optional callback to be called when user taps the backdrop to close a panel
+  final OnTabBackdropCallback? onTapBackdrop;
+
   SlidingUpPanel(
       {Key? key,
       this.panel,
@@ -186,6 +191,7 @@ class SlidingUpPanel extends StatefulWidget {
       this.backdropColor = Colors.black,
       this.backdropOpacity = 0.5,
       this.backdropTapClosesPanel = true,
+      this.onTapBackdrop,
       this.onPanelSlide,
       this.onPanelOpened,
       this.onPanelClosed,
@@ -273,7 +279,16 @@ class _SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvid
                         if ((widget.slideDirection == SlideDirection.UP ? 1 : -1) * dets.velocity.pixelsPerSecond.dy > 0) _close();
                       }
                     : null,
-                onTap: widget.backdropTapClosesPanel ? () => _close() : null,
+                onTap: widget.backdropTapClosesPanel
+                    ? widget.onTapBackdrop != null
+                        ? () async {
+                            final shouldClose = await widget.onTapBackdrop!();
+                            if (shouldClose) {
+                              _close();
+                            }
+                          }
+                        : () => _close()
+                    : null,
                 child: AnimatedBuilder(
                     animation: _ac,
                     builder: (context, _) {
