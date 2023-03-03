@@ -11,6 +11,7 @@ import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:smooth_corner/smooth_corner.dart';
 
 enum SlideDirection {
   UP,
@@ -316,12 +317,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvid
                       margin: widget.margin,
                       padding: widget.padding,
                       decoration: widget.renderPanelSheet
-                          ? BoxDecoration(
-                              border: widget.border,
-                              borderRadius: widget.borderRadius,
-                              boxShadow: widget.boxShadow,
-                              color: widget.color,
-                            )
+                          ? ShapeDecoration(shape: SmoothRectangleBorder(borderRadius: widget.borderRadius!, smoothness: .6), color: widget.color, shadows: widget.boxShadow)
                           : null,
                       child: child,
                     );
