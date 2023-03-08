@@ -48,12 +48,6 @@ class SlidingUpPanel extends StatefulWidget {
   /// to fill the screen.
   final Widget? body;
 
-  /// Optional persistent widget that floats above the [panel] and attaches
-  /// to the top of the [panel]. Content at the top of the panel will be covered
-  /// by this widget. Add padding to the bottom of the `panel` to
-  /// avoid coverage.
-  final Widget? header;
-
   /// Optional persistent widget that floats above the [panel] and
   /// attaches to the bottom of the [panel]. Content at the bottom of the panel
   /// will be covered by this widget. Add padding to the bottom of the `panel`
@@ -163,7 +157,7 @@ class SlidingUpPanel extends StatefulWidget {
   final PanelState defaultPanelState;
 
   /// Optional callback to be called when user taps the backdrop to close a panel
-  final OnTapBackdropCallback? onTapBackdrop;
+  final OnTapBackdropCallback? onBeforeClose;
 
   SlidingUpPanel(
       {Key? key,
@@ -192,7 +186,7 @@ class SlidingUpPanel extends StatefulWidget {
       this.backdropColor = Colors.black,
       this.backdropOpacity = 0.5,
       this.backdropTapClosesPanel = true,
-      this.onTapBackdrop,
+      this.onBeforeClose,
       this.onPanelSlide,
       this.onPanelOpened,
       this.onPanelClosed,
@@ -201,7 +195,6 @@ class SlidingUpPanel extends StatefulWidget {
       this.isDraggable = true,
       this.slideDirection = SlideDirection.UP,
       this.defaultPanelState = PanelState.CLOSED,
-      this.header,
       this.footer})
       : assert(panel != null || panelBuilder != null),
         assert(0 <= backdropOpacity && backdropOpacity <= 1.0),
@@ -280,16 +273,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvid
                         if ((widget.slideDirection == SlideDirection.UP ? 1 : -1) * dets.velocity.pixelsPerSecond.dy > 0) _close();
                       }
                     : null,
-                onTap: widget.backdropTapClosesPanel
-                    ? widget.onTapBackdrop != null
-                        ? () async {
-                            final shouldClose = await widget.onTapBackdrop!();
-                            if (shouldClose) {
-                              _close();
-                            }
-                          }
-                        : () => _close()
-                    : null,
+                onTap: widget.backdropTapClosesPanel ? () => _close() : null,
                 child: AnimatedBuilder(
                     animation: _ac,
                     builder: (context, _) {
@@ -335,43 +319,6 @@ class _SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvid
                             height: widget.maxHeight,
                             child: widget.panel != null ? widget.panel : widget.panelBuilder!(_sc),
                           )),
-                      // // header
-                      // widget.header != null
-                      //     ? IgnorePointer(
-                      //     child: Positioned(
-                      //       top: widget.slideDirection == SlideDirection.UP ? 0.0 : null,
-                      //       bottom: widget.slideDirection == SlideDirection.DOWN ? 0.0 : null,
-                      //       child: widget.header ?? SizedBox(),
-                      //     )
-                      // )
-                      //     : IgnorePointer(child: Container()),
-                      // footer
-                      // widget.footer != null
-                      //     ? Positioned(
-                      //         top: widget.slideDirection == SlideDirection.UP ? null : 0.0,
-                      //         bottom: widget.slideDirection == SlideDirection.DOWN ? null : 0.0,
-                      //         child: widget.footer ?? SizedBox())
-                      //     : Container(),
-
-                      // // collapsed panel
-                      // Positioned(
-                      //   top: widget.slideDirection == SlideDirection.UP ? 0.0 : null,
-                      //   bottom: widget.slideDirection == SlideDirection.DOWN ? 0.0 : null,
-                      //   width:
-                      //       MediaQuery.of(context).size.width - (widget.margin != null ? widget.margin!.horizontal : 0) - (widget.padding != null ? widget.padding!.horizontal : 0),
-                      //   child: Container(
-                      //     height: widget.minHeight,
-                      //     child: widget.collapsed == null
-                      //         ? IgnorePointer(child: Container())
-                      //         : FadeTransition(
-                      //             opacity: Tween(begin: 1.0, end: 0.0).animate(_ac),
-
-                      //             // if the panel is open ignore pointers (touch events) on the collapsed
-                      //             // child so that way touch events go through to whatever is underneath
-                      //             child: IgnorePointer(ignoring: _isPanelOpen, child: widget.collapsed),
-                      //           ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -519,8 +466,15 @@ class _SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvid
   //---------------------------------
 
   //close the panel
-  Future<void> _close() {
-    return _ac.fling(velocity: -1.0);
+  Future<void> _close() async {
+    if (widget.onBeforeClose != null) {
+      final shouldClose = await widget.onBeforeClose!();
+      if (shouldClose) {
+        return _ac.fling(velocity: -1.0);
+      }
+    } else {
+      return _ac.fling(velocity: -1.0);
+    }
   }
 
   //open the panel
