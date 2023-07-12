@@ -509,6 +509,10 @@ class _SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvid
     return _ac.animateTo(value, duration: duration, curve: curve);
   }
 
+  Future<void> _flingPanel(double velocity) {
+    return _ac.fling(velocity: velocity);
+  }
+
   //animate the panel position to the snap point
   //REQUIRES that widget.snapPoint != null
   Future<void> _animatePanelToSnapPoint({Duration? duration, Curve curve = Curves.linear}) {
@@ -592,6 +596,11 @@ class PanelController {
     assert(isAttached, "PanelController must be attached to a SlidingUpPanel");
     assert(0.0 <= value && value <= 1.0);
     return _panelState!._animatePanelToPosition(value, duration: duration, curve: curve);
+  }
+
+  Future<void> flingPanel(double velocity) async {
+    assert(isAttached, "PanelController must be attached to a SlidingUpPanel");
+    return _panelState!._flingPanel(velocity);
   }
 
   /// Animates the panel position to the snap point
