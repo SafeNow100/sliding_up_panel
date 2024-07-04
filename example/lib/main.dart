@@ -13,7 +13,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong/latlong.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 void main() => runApp(SlidingUpPanelExample());
@@ -273,21 +273,20 @@ class _HomePageState extends State<HomePage> {
   Widget _body() {
     return FlutterMap(
       options: MapOptions(
-        center: LatLng(40.441589, -80.010948),
-        zoom: 13,
+        initialCenter: LatLng(40.441589, -80.010948),
+        initialZoom: 13,
         maxZoom: 15,
       ),
-      layers: [
-        TileLayerOptions(
-            urlTemplate: "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"),
-        MarkerLayerOptions(markers: [
+      children: [
+        TileLayer(urlTemplate: "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"),
+        MarkerLayer(markers: [
           Marker(
               point: LatLng(40.441753, -80.011476),
-              builder: (ctx) => Icon(
-                    Icons.location_on,
-                    color: Colors.blue,
-                    size: 48.0,
-                  ),
+              child: Icon(
+                Icons.location_on,
+                color: Colors.blue,
+                size: 48.0,
+              ),
               height: 60),
         ]),
       ],
